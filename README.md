@@ -1,1 +1,4 @@
-# Do_app
+# do_app
+
+Tracker habits app
+
