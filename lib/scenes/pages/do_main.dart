@@ -1,9 +1,13 @@
+import 'package:do_app/bloc/task_bloc/task_bloc.dart';
+import 'package:do_app/models/do_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class MainScreenWrapper extends StatefulWidget {
-  const MainScreenWrapper({Key? key}) : super(key: key);
+
+  const MainScreenWrapper({Key? key,}) : super(key: key);
 
   @override
   State<MainScreenWrapper> createState() => _MainScreenWrapperState();
@@ -12,95 +16,16 @@ class MainScreenWrapper extends StatefulWidget {
 class _MainScreenWrapperState extends State<MainScreenWrapper> {
 
   DateTime date = DateTime.now();
-  List<String> todo = [];
-
-  void incrementCounter(String val) {
-    setState(() {
-      todo.add(val);
-    });
-  }
-
-  Widget _buildToDo() {
-    return ListView.builder(
-        itemCount: todo.length,
-        itemBuilder: (context, index) {
-          return Slidable(
-              key: const ValueKey(0),
-              endActionPane: ActionPane(
-                dismissible: DismissiblePane(onDismissed: () {
-
-                }),
-                motion: const DrawerMotion(),
-                children: [
-                  SlidableAction(
-                      onPressed: (value) {
-                        todo.removeAt(index);
-                        setState((){});
-                      },
-                    backgroundColor: Colors.red,
-                    icon: Icons.delete,
-                    label: 'Delete',
-                  )
-                ],
-              ),
-              child: _buildTodoItem(todo[index]));
-        }
-    );
-  }
-
-  Widget _buildTodoItem(String todoText){
-    return new ListTile(
-      title: new Text(todoText),
-    );
-  }
-
-  void _pushAddTodoScreen() {
-    showModalBottomSheet(
-        context: context,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
-        builder: (BuildContext context){
-          return Padding(
-            padding: MediaQuery.of(context).viewInsets,
-            child: Container(
-              height: 150,
-              child: Column(
-                children: <Widget> [
-                  TextField(
-                      onSubmitted: (val){
-                        incrementCounter(val);
-                        _buildToDo();
-                        Navigator.pop(context);
-                      }
-                  ),
-
-                  TextButton(
-                    onPressed: (){
-                      showDatePicker(
-                        context: context,
-                        initialDate: date,
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime(2100),
-                      );
-                      setState(() => date);
-                    },
-                    child: const Icon(Icons.calendar_today, color: Colors.black,),
-                  )
-                ],
-              ),
-            ),
-          );
-        }
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController controllerTask = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: Text("Do App"),
         actions: [
           IconButton(
-            onPressed: (){
+            onPressed: () {
               Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Setting())
@@ -111,13 +36,106 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
         ],
       ),
       resizeToAvoidBottomInset: true,
-      body: _buildToDo(),
-      floatingActionButton: new FloatingActionButton(
-          onPressed: _pushAddTodoScreen,
-          tooltip: 'Add task',
-          child: new Icon(Icons.add)
+      body: BlocBuilder<TaskBloc, TaskState>(
+        builder: (context, state) {
+          if(state is TaskLoading) {
+            return const CircularProgressIndicator();
+          }
+          if(state is TaskLoaded) {
+            return ListView.builder(
+                //shrinkWrap: true,
+                itemCount: state.todos.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Slidable(
+                    key: const ValueKey(0),
+                    endActionPane: ActionPane(
+                      dismissible: DismissiblePane(onDismissed: () {}),
+                      motion: const DrawerMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (value) {
+                           // state.todos.removeAt(index);
+                            setState(() {});
+                          },
+                          backgroundColor: Colors.red,
+                          icon: Icons.delete,
+                          label: 'Delete',
+                        )
+                      ],
+                    ),
+                    child: ListTile(title: _todoCard(state.todos[index])),
+                  );
+                }
+            );
+          }
+          else {
+            return Text("No Work");
+          }
+        },
       ),
-      //
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+              builder: (BuildContext context) {
+                return Padding(
+                  padding: MediaQuery
+                      .of(context)
+                      .viewInsets,
+                  child: Container(
+                    height: 150,
+                    child: Column(
+                      children: <Widget>[
+                        TextFormField(
+                          controller: controllerTask,
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              var model = DoModel(
+                                task: controllerTask.value.text,
+                              );
+                              context.read<TaskBloc>().add(
+                                  AddTaskEvent(model: model));
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Add To Do')
+                        ),
+                        // TextButton(
+                        //   onPressed: () {
+                        //     showDatePicker(
+                        //       context: context,
+                        //       initialDate: date,
+                        //       firstDate: DateTime(1900),
+                        //       lastDate: DateTime(2100),
+                        //     );
+                        //     setState(() => date);
+                        //   },
+                        //   child: const Icon(
+                        //     Icons.calendar_today, color: Colors.black,),
+                        // )
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+          tooltip: 'Add task',
+          child: new Icon(Icons.add),
+      ),
+    );
+    //
+  }
+
+  Row _todoCard(DoModel model) {
+    return Row(
+      children: [
+        Text(
+          '${model.task}',
+        ),
+      ],
     );
   }
 }
