@@ -14,7 +14,6 @@ class MainScreenWrapper extends StatefulWidget {
 }
 
 class _MainScreenWrapperState extends State<MainScreenWrapper> {
-
   DateTime date = DateTime.now();
 
   @override
@@ -43,28 +42,48 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
           }
           if(state is TaskLoaded) {
             return ListView.builder(
-                //shrinkWrap: true,
+                shrinkWrap: true,
                 itemCount: state.todos.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Slidable(
-                    key: const ValueKey(0),
-                    endActionPane: ActionPane(
-                      dismissible: DismissiblePane(onDismissed: () {}),
-                      motion: const DrawerMotion(),
-                      children: [
-                        SlidableAction(
-                          onPressed: (value) {
-                           // state.todos.removeAt(index);
-                            setState(() {});
-                          },
-                          backgroundColor: Colors.red,
-                          icon: Icons.delete,
-                          label: 'Delete',
-                        )
-                      ],
-                    ),
-                    child: ListTile(title: _todoCard(state.todos[index])),
+                 return ListTile(
+                      title: _todoCard(state.todos[index]),
+                      onTap: () {
+                        var model = DoModel(
+                          task: controllerTask.value.text,
+                        );
+                        context.read<TaskBloc>().add(
+                            DeleteTaskEven(model: model)
+                        );
+                      }
                   );
+                  // return Slidable(
+                  //   key: const ValueKey(0),
+                  //   endActionPane: ActionPane(
+                  //     dismissible: DismissiblePane(
+                  //         key: UniqueKey(),
+                  //         onDismissed: () {
+                  //          // state.todos.removeAt(index);
+                  //         }
+                  //     ),
+                  //     motion: const DrawerMotion(),
+                  //     children: [
+                  //       SlidableAction(
+                  //         onPressed: (value) {
+                  //           //state.todos.removeAt(index);
+                  //         },
+                  //         //backgroundColor: Colors.red,
+                  //        // icon: Icons.delete,
+                  //         label: 'Delete',
+                  //       )
+                  //     ],
+                  //   ),
+                  //   child: ListTile(
+                  //       title: _todoCard(state.todos[index]),
+                  //       onTap: () {
+                  //         state.todos.removeAt(index);
+                  //     }
+                  //   ),
+                  // );
                 }
             );
           }
@@ -129,12 +148,24 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
     //
   }
 
-  Row _todoCard(DoModel model) {
+  Widget _todoCard(DoModel model) {
     return Row(
       children: [
         Text(
           '${model.task}',
         ),
+        Row(
+          children: [
+            IconButton(
+                onPressed: (){
+                  context.read<TaskBloc>().add(
+                    DeleteTaskEven(model: model)
+                  );
+                },
+                icon: const Icon(Icons.cancel)
+            )
+          ],
+        )
       ],
     );
   }

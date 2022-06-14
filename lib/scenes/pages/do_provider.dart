@@ -17,7 +17,7 @@ class TaskProvider extends StatelessWidget {
             ..add(
               LoadTask(todos: [
                   DoModel(
-                      task: ''
+                      task: '',
                   ),
                 ]),
             ),

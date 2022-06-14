@@ -15,19 +15,8 @@ class DoApp extends StatefulWidget {
 class _DoAppState extends State<DoApp> {
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-            create: (context) => TaskBloc()
-                ..add(
-                  const LoadTask(todos: [
-                    DoModel(
-                        task: 'fgf'
-                    ),
-                  ]),
-                )
-        )
-      ],
+    return BlocProvider(
+      create: (context) => TaskBloc()..add(LoadTask()),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(

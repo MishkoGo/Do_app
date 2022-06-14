@@ -12,6 +12,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   TaskBloc() : super(TaskLoading()) {
     on<LoadTask>(_onLoadTodos);
     on<AddTaskEvent>(_onAddEvent);
+    on<DeleteTaskEven>(_onDeleteEvent);
   }
 
   void _onLoadTodos(LoadTask event, Emitter<TaskState> emit){
@@ -27,6 +28,17 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         TaskLoaded(
           todos: List.from(state.todos)..add(event.model),
           ),
+      );
+    }
+  }
+
+  void _onDeleteEvent(DeleteTaskEven event, Emitter<TaskState> emit){
+    final state = this.state;
+    if (state is TaskLoaded) {
+      emit(
+        TaskLoaded(
+          todos: List.from(state.todos)..remove(event.model)
+        ),
       );
     }
   }
