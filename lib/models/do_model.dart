@@ -1,28 +1,28 @@
 class DoModel{
-  //final String id;
+  final int ?id;
   final String task;
 
   const DoModel({
-   // required this.id,
+    required this.id,
     required this.task,
   });
 
   DoModel copyWith({
     String? task,
-   // String? id,
+    int? id,
   }) {
     return DoModel(
-        //id: id ?? this.id,
+        id: id ?? this.id,
         task: task ?? this.task,
     );
   }
 
   @override
   List<Object> get props => [
-    task
+    task,
   ];
 
   static List<DoModel> todos = [
-    DoModel(task: 'task'),
+    DoModel(task: 'task', id: null),
   ];
 }

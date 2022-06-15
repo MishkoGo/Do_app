@@ -23,8 +23,44 @@ class _DoAppState extends State<DoApp> {
           brightness: Brightness.dark,
           primarySwatch: Colors.blueGrey,
         ),
-        home: Scaffold(
-          body: MainScreenWrapper(),
+        home: DefaultTabController(
+          length: 3,
+          child: Scaffold(
+            appBar: AppBar(
+              bottom: const TabBar(
+                  tabs: [
+                    Tab(
+                      text: "All",
+                    ),
+                    Tab(
+                      text: "Today",
+                    ),
+                    Tab(
+                      text: 'Default Group',
+                    ),
+                  ],
+              ),
+              title: const Text('Do App'),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Setting())
+                    );
+                  },
+                  icon: Icon(Icons.settings),
+                )
+              ],
+            ),
+            body: const TabBarView(
+              children: [
+                MainScreenWrapper(),
+                Text("Failed"),
+                Text("Failed 2"),
+              ],
+            )
+          ),
         ),
       ),
     );

@@ -45,3 +45,4 @@ class DeleteTaskEven extends TaskEvent {
   @override
   List<Object> get props => [model];
 }
+
