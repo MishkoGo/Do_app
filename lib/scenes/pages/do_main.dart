@@ -45,45 +45,40 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
                 shrinkWrap: true,
                 itemCount: state.todos.length,
                 itemBuilder: (BuildContext context, int index) {
-                 return ListTile(
-                      title: _todoCard(state.todos[index]),
-                      onTap: () {
-                        var model = DoModel(
-                          task: controllerTask.value.text,
-                        );
-                        context.read<TaskBloc>().add(
-                            DeleteTaskEven(model: model)
-                        );
-                      }
+                 // return ListTile(
+                 //      title: _todoCard(state.todos[index]),
+                 //      onTap: () {
+                 //        print("object");
+                 //        var model = DoModel(task: controllerTask.value.text);
+                 //        context.read<TaskBloc>().add(
+                 //            DeleteTaskEven(model: model)
+                 //        );
+                 //        state.todos.removeAt(index);
+                 //      }
+                 //  );
+                  return Slidable(
+                    key: const ValueKey(0),
+                    endActionPane: ActionPane(
+                      motion: const StretchMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (value) {
+                            var model = DoModel(task: controllerTask.value.text);
+                            context.read<TaskBloc>().add(
+                                DeleteTaskEven(model: model)
+                            );
+                            state.todos.removeAt(index);
+                          },
+                          backgroundColor: Colors.red,
+                          icon: Icons.delete,
+                          label: 'Delete',
+                        )
+                      ],
+                    ),
+                    child: ListTile(
+                        title: _todoCard(state.todos[index]),
+                    ),
                   );
-                  // return Slidable(
-                  //   key: const ValueKey(0),
-                  //   endActionPane: ActionPane(
-                  //     dismissible: DismissiblePane(
-                  //         key: UniqueKey(),
-                  //         onDismissed: () {
-                  //          // state.todos.removeAt(index);
-                  //         }
-                  //     ),
-                  //     motion: const DrawerMotion(),
-                  //     children: [
-                  //       SlidableAction(
-                  //         onPressed: (value) {
-                  //           //state.todos.removeAt(index);
-                  //         },
-                  //         //backgroundColor: Colors.red,
-                  //        // icon: Icons.delete,
-                  //         label: 'Delete',
-                  //       )
-                  //     ],
-                  //   ),
-                  //   child: ListTile(
-                  //       title: _todoCard(state.todos[index]),
-                  //       onTap: () {
-                  //         state.todos.removeAt(index);
-                  //     }
-                  //   ),
-                  // );
                 }
             );
           }
@@ -154,18 +149,6 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
         Text(
           '${model.task}',
         ),
-        Row(
-          children: [
-            IconButton(
-                onPressed: (){
-                  context.read<TaskBloc>().add(
-                    DeleteTaskEven(model: model)
-                  );
-                },
-                icon: const Icon(Icons.cancel)
-            )
-          ],
-        )
       ],
     );
   }
