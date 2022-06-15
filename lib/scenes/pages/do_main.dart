@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MainScreenWrapper extends StatefulWidget {
 
@@ -18,22 +19,10 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController controllerTask = TextEditingController();
+     TextEditingController controllerTask = TextEditingController();
+     FToast fToast;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Do App"),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Setting())
-              );
-            },
-            icon: Icon(Icons.settings),
-          )
-        ],
-      ),
       resizeToAvoidBottomInset: true,
       body: BlocBuilder<TaskBloc, TaskState>(
         builder: (context, state) {
@@ -45,17 +34,6 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
                 shrinkWrap: true,
                 itemCount: state.todos.length,
                 itemBuilder: (BuildContext context, int index) {
-                 // return ListTile(
-                 //      title: _todoCard(state.todos[index]),
-                 //      onTap: () {
-                 //        print("object");
-                 //        var model = DoModel(task: controllerTask.value.text);
-                 //        context.read<TaskBloc>().add(
-                 //            DeleteTaskEven(model: model)
-                 //        );
-                 //        state.todos.removeAt(index);
-                 //      }
-                 //  );
                   return Slidable(
                     key: const ValueKey(0),
                     endActionPane: ActionPane(
@@ -72,11 +50,45 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
                           backgroundColor: Colors.red,
                           icon: Icons.delete,
                           label: 'Delete',
-                        )
+                        ),
+                        SlidableAction(
+                          onPressed: (value) {
+                            showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: Text("Edit"),
+                                  content: TextField(
+                                    onSubmitted: (model){
+                                      var model = DoModel(
+                                          task: controllerTask.value.text
+                                      );
+                                      context.read<TaskBloc>().add(UpdateTaskEven(model: model.copyWith()));
+                                      state.todos.removeAt(index);
+                                      Navigator.pop(context);
+                                    },
+                                    controller: controllerTask,
+                                  ),
+                                )
+                            );
+                          },
+                          backgroundColor: Colors.yellow,
+                          icon: Icons.edit,
+                          label: 'Edit',
+                        ),
+                        SlidableAction(
+                          onPressed: (value) {
+                            print(controllerTask.value.text);
+                            
+                          },
+                          backgroundColor: Colors.grey,
+                          icon: Icons.copy,
+                          label: 'Copy',
+                        ),
                       ],
                     ),
                     child: ListTile(
                         title: _todoCard(state.todos[index]),
+                        subtitle: Text('${date.year}/${date.month}/${date.day}',),
                     ),
                   );
                 }
@@ -99,36 +111,36 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
                       .of(context)
                       .viewInsets,
                   child: Container(
-                    height: 150,
+                    height: 140,
                     child: Column(
                       children: <Widget>[
-                        TextFormField(
+                        TextField(
+                          onSubmitted: (model){
+                            var model = DoModel(
+                              task: controllerTask.value.text,
+                            );
+                            context.read<TaskBloc>().add(
+                                AddTaskEvent(model: model));
+                            Navigator.pop(context);
+                          },
                           controller: controllerTask,
                         ),
-                        ElevatedButton(
-                            onPressed: () {
-                              var model = DoModel(
-                                task: controllerTask.value.text,
-                              );
-                              context.read<TaskBloc>().add(
-                                  AddTaskEvent(model: model));
-                              Navigator.pop(context);
-                            },
-                            child: const Text('Add To Do')
+                        TextButton(
+                          onPressed: () async{
+                            DateTime? newDate = await showDatePicker(
+                              context: context,
+                              initialDate: date,
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime(2100),
+                            );
+                            setState(() => date = newDate!);
+                          },
+                          child: const Icon(
+                            Icons.calendar_today, color: Colors.white,),
                         ),
-                        // TextButton(
-                        //   onPressed: () {
-                        //     showDatePicker(
-                        //       context: context,
-                        //       initialDate: date,
-                        //       firstDate: DateTime(1900),
-                        //       lastDate: DateTime(2100),
-                        //     );
-                        //     setState(() => date);
-                        //   },
-                        //   child: const Icon(
-                        //     Icons.calendar_today, color: Colors.black,),
-                        // )
+                        Text(
+                            '${date.year}/${date.month}/${date.day}',
+                        )
                       ],
                     ),
                   ),

@@ -49,9 +49,14 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     if(state is TaskLoaded) {
       emit(
         TaskLoaded(
-          todos: List.from(state.todos)..replaceRange(event.model.id, event.model.id, [event.model]),
+          todos: List.from(state.todos)..remove,
         ),
       );
+      emit(
+        TaskLoaded(
+          todos: List.from(state.todos)..add(event.model),
+        ),
+      );  
     }
   }
 }
