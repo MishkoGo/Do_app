@@ -20,8 +20,6 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
   @override
   Widget build(BuildContext context) {
      TextEditingController controllerTask = TextEditingController();
-     FToast fToast;
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: BlocBuilder<TaskBloc, TaskState>(
@@ -78,7 +76,7 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
                         SlidableAction(
                           onPressed: (value) {
                             print(controllerTask.value.text);
-                            
+                            Fluttertoast.showToast(msg: 'Copied');
                           },
                           backgroundColor: Colors.grey,
                           icon: Icons.copy,
@@ -166,27 +164,3 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
   }
 }
 
-class Setting extends StatefulWidget {
-  const Setting({Key? key}) : super(key: key);
-
-  @override
-  State<Setting> createState() => _SettingState();
-}
-
-class _SettingState extends State<Setting> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Setting"),
-      ),
-      body: Container(
-        child: Column(
-          children: [
-            Text("in-App"),
-          ],
-        ),
-      ),
-    );
-  }
-}

@@ -1,9 +1,9 @@
+import 'package:do_app/scenes/pages/do_group.dart';
 import 'package:do_app/scenes/pages/do_main.dart';
-import 'package:do_app/scenes/pages/do_provider.dart';
+import 'package:do_app/scenes/pages/do_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/task_bloc/task_bloc.dart';
-import 'models/do_model.dart';
 
 class DoApp extends StatefulWidget {
   const DoApp({Key? key}) : super(key: key);
@@ -23,44 +23,63 @@ class _DoAppState extends State<DoApp> {
           brightness: Brightness.dark,
           primarySwatch: Colors.blueGrey,
         ),
-        home: DefaultTabController(
-          length: 3,
-          child: Scaffold(
-            appBar: AppBar(
-              bottom: const TabBar(
-                  tabs: [
-                    Tab(
-                      text: "All",
-                    ),
-                    Tab(
-                      text: "Today",
-                    ),
-                    Tab(
-                      text: 'Default Group',
-                    ),
+        home: Builder(
+          builder: (context) {
+            return DefaultTabController(
+              length: 4,
+              child: Scaffold(
+                appBar: AppBar(
+                  bottom:  TabBar(
+                    isScrollable: true,
+                      tabs: [
+                        Tab(
+                          text: "All",
+                        ),
+                        Tab(
+                          text: "Today",
+                        ),
+                        Tab(
+                          text: 'Default Group',
+                        ),
+                        Tab(
+                          child: IconButton(
+                            splashRadius: 10,
+                            iconSize: 22,
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => NewGroup())
+                              );
+                            },
+                            icon: Icon(Icons.add),
+                          ),
+                        ),
+                      ],
+                  ),
+                  title: const Text('Do App'),
+                  actions: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Setting())
+                        );
+                      },
+                      icon: Icon(Icons.settings),
+                    )
                   ],
-              ),
-              title: const Text('Do App'),
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Setting())
-                    );
-                  },
-                  icon: Icon(Icons.settings),
+                ),
+                body: const TabBarView(
+                  children: [
+                    MainScreenWrapper(),
+                    Text("Failed"),
+                    Text("Failed 2"),
+                    Text("Failed 2"),
+                  ],
                 )
-              ],
-            ),
-            body: const TabBarView(
-              children: [
-                MainScreenWrapper(),
-                Text("Failed"),
-                Text("Failed 2"),
-              ],
-            )
-          ),
+              ),
+            );
+          }
         ),
       ),
     );
