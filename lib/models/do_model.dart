@@ -1,9 +1,15 @@
-class DoModel{
-  final String task;
+import 'package:hive/hive.dart';
+import 'do_model.g.dart';
 
-  const DoModel({
-    required this.task,
+@HiveType(typeId: 0)
+class DoModel extends HiveObject{
+  @HiveField(1)
+  String task;
+
+  DoModel({
+     this.task = '',
   });
+
 
   DoModel copyWith({
     String? task,

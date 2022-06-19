@@ -3,6 +3,7 @@ import 'package:do_app/scenes/pages/do_main.dart';
 import 'package:do_app/scenes/pages/do_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'bloc/task_bloc/task_bloc.dart';
 
 class DoApp extends StatefulWidget {
@@ -13,6 +14,12 @@ class DoApp extends StatefulWidget {
 }
 
 class _DoAppState extends State<DoApp> {
+  @override
+  void dispose() async {
+    Hive.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
