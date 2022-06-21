@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class NewGroup extends StatefulWidget {
-  const NewGroup({Key? key}) : super(key: key);
+  const NewGroup({Key key}) : super(key: key);
 
   @override
   State<NewGroup> createState() => _NewGroupState();

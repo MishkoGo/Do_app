@@ -2,10 +2,11 @@ part of 'task_bloc.dart';
 
 @immutable
 abstract class TaskState {
-  const TaskState();
-
   @override
   List<Object> get props => [];
+}
+class NoteInitial extends TaskState {
+
 }
 
 class TaskLoading extends TaskState {}
@@ -13,9 +14,12 @@ class TaskLoading extends TaskState {}
 class TaskLoaded extends TaskState {
   final List<DoModel> todos;
 
-  const TaskLoaded({this.todos = const <DoModel>[]});
+  TaskLoaded({@required this.todos});
 
-  @override
-  List<Object> get props => [todos];
 }
 
+class EditTaskState extends TaskState {
+  final DoModel model;
+
+  EditTaskState({@required this.model});
+}

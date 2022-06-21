@@ -4,7 +4,7 @@ import 'do_model.dart';
 
 class DoModelAdapter extends TypeAdapter<DoModel> {
   @override
-  final int typeId = 0;
+  final int typeId = 1;
 
   @override
   DoModel read(BinaryReader reader) {
@@ -13,7 +13,7 @@ class DoModelAdapter extends TypeAdapter<DoModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return DoModel(
-      task: fields[1] as String,
+      task: fields[0] as String,
     );
   }
 
@@ -21,7 +21,7 @@ class DoModelAdapter extends TypeAdapter<DoModel> {
   void write(BinaryWriter writer, DoModel obj) {
     writer
       ..writeByte(1)
-      ..writeByte(1)
+      ..writeByte(0)
       ..write(obj.task);
   }
 

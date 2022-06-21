@@ -3,46 +3,40 @@ part of 'task_bloc.dart';
 @immutable
 abstract class TaskEvent {
 
-  const TaskEvent();
-
   @override
   List<Object> get props => [];
 }
 
-class LoadTask extends TaskEvent {
-  final List<DoModel> todos;
+class NoteInitialEvent extends TaskEvent {
 
-  const LoadTask({this.todos = const <DoModel>[]});
-
-  @override
-  List<Object> get props => [todos];
 }
 
+// class LoadTask extends TaskEvent {
+//   final List<DoModel> todos;
+//
+//   LoadTask({this.todos = const <DoModel>[]});
+//
+//   @override
+//   List<Object> get props => [todos];
+// }
+
 class AddTaskEvent extends TaskEvent{
-  final DoModel model;
+  final String model;
 
-  const AddTaskEvent({required this.model});
-
-  @override
-  List<Object> get props => [model];
-
+  AddTaskEvent({@required this.model});
 }
 
 class UpdateTaskEven extends TaskEvent {
-  final DoModel model;
+  final String title;
+  final int index;
 
-  const UpdateTaskEven({required this.model});
-
-  @override
-  List<Object> get props => [model];
+  UpdateTaskEven({@required this.index,@required this.title});
 }
 
 class DeleteTaskEven extends TaskEvent {
-  final DoModel model;
+  final int model;
 
-  const DeleteTaskEven({required this.model});
+  DeleteTaskEven({@required this.model});
 
-  @override
-  List<Object> get props => [model];
 }
 
