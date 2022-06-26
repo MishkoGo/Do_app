@@ -5,7 +5,7 @@ import 'package:do_app/services/todo_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
-import 'bloc/task_bloc/task_bloc.dart';
+//import 'bloc/task_bloc/task_bloc.dart';
 
 class DoApp extends StatefulWidget {
   const DoApp({Key key}) : super(key: key);
@@ -14,74 +14,76 @@ class DoApp extends StatefulWidget {
   State<DoApp> createState() => _DoAppState();
 }
 
-class _DoAppState extends State<DoApp> {
+
+class _DoAppState extends State<DoApp> with TickerProviderStateMixin{
+    List<Widget> myTabs = [
+    Tab(text: "All",),
+  ];
+
+    List<Widget> views = [
+      MainScreenWrapper(),
+    ];
+
+   TabController tabController;
+
+   @override
+   void initState(){
+     tabController = TabController(vsync: this, length: myTabs.length);
+     super.initState();
+   }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<TaskBloc>(context).add(NoteInitialEvent());
+    // BlocProvider.of<TaskBloc>(context).add(NoteInitialEvent());
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.blueGrey,
       ),
-      home: Builder(
-        builder: (context) {
-          return DefaultTabController(
-            length: 4,
-            child: Scaffold(
-              appBar: AppBar(
-                bottom:  TabBar(
-                  isScrollable: true,
-                    tabs: [
-                      Tab(
-                        text: "All",
-                      ),
-                      Tab(
-                        text: "Today",
-                      ),
-                      Tab(
-                        text: 'Default Group',
-                      ),
-                      Tab(
-                        child: IconButton(
-                          splashRadius: 10,
-                          iconSize: 22,
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => NewGroup())
+      home: DefaultTabController(
+            length: myTabs.length,
+            child: Builder(
+              builder: (context) {
+                tabController = DefaultTabController.of(context);
+                return Scaffold(
+                  appBar: AppBar(
+                    bottom:  TabBar(
+                      tabs: myTabs.toList(),
+                      controller: tabController,
+                    ),
+                    title: const Text('Do App'),
+                    actions: [
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            var result =  myTabs.add(
+                                const Tab(
+                                  text: "New",
+                                )
                             );
-                          },
-                          icon: Icon(Icons.add),
-                        ),
-                      ),
+                            views.add(MainScreenWrapper());
+                            print(myTabs.length);
+                            return result;
+                          });
+                        },
+                        icon: Icon(Icons.add),
+                      )
                     ],
-                ),
-                title: const Text('Do App'),
-                actions: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Setting())
-                      );
-                    },
-                    icon: Icon(Icons.settings),
-                  )
-                ],
-              ),
-              body: const TabBarView(
-                children: [
-                  MainScreenWrapper(),
-                  Text("Failed"),
-                  Text("Failed 2"),
-                  Text("Failed 2"),
-                ],
-              )
+                  ),
+                  body: TabBarView(
+                    children: views.toList(),
+                  ),
+                );
+              }
             ),
-          );
-        }
-      ),
+          ),
     );
   }
 }

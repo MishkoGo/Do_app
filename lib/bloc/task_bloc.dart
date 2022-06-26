@@ -47,7 +47,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   void _onUpdateEvent(UpdateTaskEven event, Emitter<TaskState> emit) async{
     TaskLoading();
-    await _updateNote(model: event.title, index: event.index);
+    await _removeFromNotes(index: event.index);
+    await _addToNotes(event.title);
+    //await _updateNote(model: event.title, index: event.index);
     emit(
       TaskLoaded(todos: _models),
     );

@@ -20,6 +20,3 @@ void main() async{
       child: DoApp(),
   ));
 }
-class HiveBoxes {
-  static String todo = 'todo_box';
-}
