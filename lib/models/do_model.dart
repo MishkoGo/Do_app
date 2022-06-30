@@ -5,8 +5,11 @@ import 'do_model.g.dart';
 class DoModel {
   @HiveField(0)
   final String task;
+  @HiveField(1)
+  final int index;
 
   DoModel({
-     this.task,
+    this.index,
+    this.task,
   });
 }

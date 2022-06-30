@@ -13,6 +13,7 @@ class DoModelAdapter extends TypeAdapter<DoModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return DoModel(
+      index: fields[1] as int,
       task: fields[0] as String,
     );
   }
@@ -20,9 +21,11 @@ class DoModelAdapter extends TypeAdapter<DoModel> {
   @override
   void write(BinaryWriter writer, DoModel obj) {
     writer
-      ..writeByte(1)
+      ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.task);
+      ..write(obj.task)
+      ..writeByte(1)
+      ..write(obj.index);
   }
 
   @override

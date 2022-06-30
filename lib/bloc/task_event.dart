@@ -1,14 +1,15 @@
 part of 'task_bloc.dart';
 
-@immutable
 abstract class TaskEvent {
 
-  @override
-  List<Object> get props => [];
+  const TaskEvent([List props = const []]);
 }
 
 class NoteInitialEvent extends TaskEvent {
+  const NoteInitialEvent() : super();
 
+  @override
+  List<Object> get props => [];
 }
 
 // class LoadTask extends TaskEvent {

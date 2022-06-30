@@ -30,7 +30,6 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
       body: ValueListenableBuilder(
         valueListenable: Hive.box<DoModel>("Note").listenable(),
         builder: (context, Box<DoModel> value, Widget _) {
-
           return SingleChildScrollView(
             child: Column(
               children: [
@@ -73,7 +72,6 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
                           padding: const EdgeInsets.only(left: 10, top: 0, right: 10, bottom: 0),
                           child: TextField(
                             onSubmitted: (model){
-
                               var model = DoModel(
                                 task: controllerTask.text,
                               );
@@ -211,75 +209,6 @@ class _NewWidgetState extends State<NewWidget> {
                           );
                         },
                       );
-                      // showDialog(
-                      //         context: context,
-                      //         builder: (ctx) =>
-                      //             AlertDialog(
-                      //               title: Text(note.task),
-                      //               content: TextField(
-                      //                 onTap: (){
-                      //                   print(note.task);
-                      //                 },
-                      //                 onSubmitted: (f){
-                      //                   BlocProvider.of<TaskBloc>(context).add(
-                      //                                 UpdateTaskEven(
-                      //                                   title: note.task,
-                      //                                 ),
-                      //                               );
-                      //                   Navigator.pop(context);
-                      //                 },
-                      //                 controller: controllerTask,
-                      //               ),
-                      //               // content: Column(
-                      //               //
-                      //               //   children: [
-                      //               //
-                      //               //     TextField(
-                      //               //       // onTap: (){
-                      //               //       //   BlocProvider.of<TaskBloc>(context).add(
-                      //               //       //     UpdateTaskEven(
-                      //               //       //       title: todo.task,
-                      //               //       //     ),
-                      //               //       //   );
-                      //               //       // },
-                      //               //       onSubmitted: (a) {
-                      //               //         print("Edit");
-                      //               //         Navigator.pop(context);
-                      //               //       },
-                      //               //       controller: controllerTask,
-                      //               //     ),
-                      //               //   ],
-                      //               // ),
-                      //             )
-                      //     );
-
-                      // showDialog(
-                      //     context: context,
-                      //     builder: (ctx) =>
-                      //         AlertDialog(
-                      //           title: Text("Edit"),
-                      //           content: Column(
-                      //             children: [
-                      //               TextField(
-                      //                 controller: controllerTask,
-                      //               ),
-                      //               TextField(
-                      //                 onSubmitted: (a) {
-                      //                   BlocProvider.of<TaskBloc>(context).add(
-                      //                     UpdateTaskEven(
-                      //                         title: controllerTask.text,
-                      //                         index: widget.index,
-                      //                     ),
-                      //                   );
-                      //                   print("Edit");
-                      //                   Navigator.pop(context);
-                      //                 },
-                      //                 controller: controllerTask,
-                      //               ),
-                      //             ],
-                      //           ),
-                      //         )
-                      // );
                     },
                     backgroundColor: Colors.yellow,
                     icon: Icons.edit,
@@ -338,36 +267,6 @@ class _NewGroupState extends State<NewGroup> {
               controller: controllerTask,
             ),
             SizedBox(height: 10,),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     showModalBottomSheet(
-            //       context: context,
-            //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(
-            //           topLeft: Radius.circular(10), topRight: Radius.circular(10))),
-            //       builder: (BuildContext context) {
-            //         return Padding(
-            //           padding: MediaQuery
-            //               .of(context)
-            //               .viewInsets,
-            //           child: Container(
-            //             height: 140,
-            //             child: Column(
-            //               children: <Widget>[
-            //                 Padding(
-            //                   padding: const EdgeInsets.only(left: 10, top: 0, right: 10, bottom: 0),
-            //                   child: TextField(
-            //                     controller: controllerTask,
-            //                   ),
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //         );
-            //       },
-            //     );
-            //   },
-            //   child: Text("Add"),
-            // )
           ],
         ),
       ),
