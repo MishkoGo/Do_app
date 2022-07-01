@@ -1,4 +1,5 @@
 # do_app
 
-Tracker habits app
+Study project ToDo. 
+Uses Flutter / Dart. Dependencies: BLoC, Firebase (Auth), Hive, permissions.
 
