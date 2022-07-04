@@ -8,8 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 
-import 'app.dart';
-import 'main_aut.dart';
+import 'main_auth.dart';
 import 'models/do_model.g.dart';
 
 Future main() async{
@@ -19,9 +18,5 @@ Future main() async{
   Hive.registerAdapter<DoModel>(DoModelAdapter());
   await Hive.openBox<DoModel>("Note");
 
-
-  runApp(BlocProvider(
-      create: (context) => TaskBloc(TodoDatabase())..add(NoteInitialEvent()),
-      child: MainPage(),
-  ));
+  runApp(const MainPage());
 }

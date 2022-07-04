@@ -1,15 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:do_app/bloc/task_bloc/task_bloc.dart';
-import 'package:do_app/main.dart';
 import 'package:do_app/models/do_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
-
-import 'do_show.dart';
-
 
 class MainScreenWrapper extends StatefulWidget {
 
@@ -26,7 +25,6 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
   Widget build(BuildContext context) {
      TextEditingController controllerTask = TextEditingController();
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       body: ValueListenableBuilder(
         valueListenable: Hive.box<DoModel>("Note").listenable(),
         builder: (context, Box<DoModel> value, Widget _) {
@@ -39,7 +37,7 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
                       return Container();
                     }
                     if (state is TaskLoaded) {
-                      return NewWidget(
+                      return ListTask(
                         date: date,
                         state: state,);
                     }
@@ -65,7 +63,7 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
                       .of(context)
                       .viewInsets,
                   child: Container(
-                    height: 140,
+                    height: 130,
                     child: Column(
                       children: <Widget>[
                         Padding(
@@ -87,19 +85,31 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
                             controller: controllerTask,
                           ),
                         ),
-                        TextButton(
-                          onPressed: () async{
-                            DateTime newDate = await showDatePicker(
-                              context: context,
-                              initialDate: date,
-                              firstDate: DateTime(1900),
-                              lastDate: DateTime(2100),
-                            );
-                            setState(() => date = newDate);
-                          },
-                          child: const Icon(
-                            Icons.calendar_today, color: Colors.white,),
-                        ),
+                           ElevatedButton(
+                             onPressed: () {
+                              CollectionReference users = FirebaseFirestore.instance
+                                .collection('Users')
+                                .doc(FirebaseAuth.instance.currentUser.uid)
+                                .collection('Note');
+                                 users
+                                  .add({'Note': controllerTask.text})
+                                  .then((value) => print("User Document"))
+                                  .catchError((error) => print("Failed to add user: $error"));
+                               },
+                             child: Text("add Firebase")),
+                        // TextButton(
+                        //   onPressed: () async{
+                        //     DateTime newDate = await showDatePicker(
+                        //       context: context,
+                        //       initialDate: date,
+                        //       firstDate: DateTime(1900),
+                        //       lastDate: DateTime(2100),
+                        //     );
+                        //     setState(() => date = newDate);
+                        //   },
+                        //   child: const Icon(
+                        //     Icons.calendar_today, color: Colors.white,),
+                        // ),
                         Text(
                             '${date.year}/${date.month}/${date.day}',
                         )
@@ -114,33 +124,32 @@ class _MainScreenWrapperState extends State<MainScreenWrapper> {
           child: new Icon(Icons.add),
       ),
     );
-    //
   }
 }
 
-class NewWidget extends StatefulWidget {
+class ListTask extends StatefulWidget {
+
   final TaskLoaded state;
   final DoModel model;
-  NewWidget({
+  final DateTime date;
+  final int index;
+
+  ListTask({
     Key key,
      this.date,
     this.state, this.index, this.model,
   }) : super(key: key);
 
-  final DateTime date;
-  final int index;
 
   @override
-  State<NewWidget> createState() => _NewWidgetState();
+  State<ListTask> createState() => _ListTaskState();
 }
 
-class _NewWidgetState extends State<NewWidget> {
+class _ListTaskState extends State<ListTask> {
   TextEditingController controllerTask = TextEditingController();
-
+  bool isState = false;
   @override
   Widget build(BuildContext context) {
-    String title = widget.model != null ? widget.model.task : "";
-    //TextEditingController controllerTask = new TextEditingController();
 
     return ValueListenableBuilder(
       valueListenable: Hive.box<DoModel>("Note").listenable(),
@@ -188,12 +197,9 @@ class _NewWidgetState extends State<NewWidget> {
                                         labelText: todo.task,
                                       ),
                                       controller: controllerTask,
-                                    ),
-                                  ),
-                                  ElevatedButton(
-                                      onPressed: (){
+                                      onSubmitted: (value) {
                                         var model = DoModel(
-                                          task: controllerTask.value.text
+                                            task: controllerTask.value.text
                                         );
                                         context.read<TaskBloc>().add(
                                             AddTaskEvent(model: model.task));
@@ -201,8 +207,8 @@ class _NewWidgetState extends State<NewWidget> {
                                             DeleteTaskEven(model: index));
                                         Navigator.pop(context);
                                       },
-                                      child: Text("Add")
-                                  )
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -225,8 +231,27 @@ class _NewWidgetState extends State<NewWidget> {
                   ),
                 ],
               ),
+              startActionPane: ActionPane(
+                motion: const StretchMotion(),
+                dismissible: DismissiblePane(onDismissed: () {},),
+                children: [
+                  SlidableAction(
+                    onPressed: (value) {
+                      Text(note.task, style: TextStyle(color: Colors.green),);
+                    },
+                      backgroundColor: Colors.green,
+                      icon: Icons.check_box,
+                  )
+                ],
+              ),
               child: ListTile(
                 title: Text(note.task),
+                onTap: () {
+                },
+                // leading: const CircleAvatar(
+                //   radius: 10,
+                //   //backgroundColor: colorNum == 2 ? Colors.red : Colors.black12,
+                // )
                 //title: Text('${res?.task}'),
                 // subtitle: Text(
                 //   '${date.year}/${date.month}/${date.day}',),
@@ -238,40 +263,4 @@ class _NewWidgetState extends State<NewWidget> {
     );
   }
 }
-
-class NewGroup extends StatefulWidget {
-  final TaskLoaded state;
-  final DoModel model;
-  final DateTime date;
-  final int index;
-  const NewGroup({Key key, this.state, this.model, this.date, this.index}) : super(key: key);
-
-  @override
-  State<NewGroup> createState() => _NewGroupState();
-}
-
-class _NewGroupState extends State<NewGroup> {
-
-  @override
-  Widget build(BuildContext context) {
-
-    String title = widget.model != null ? widget.model.task : "";
-    final controllerTask = TextEditingController(text: title);
-
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: <Widget> [
-            TextField(
-              controller: controllerTask,
-            ),
-            SizedBox(height: 10,),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 

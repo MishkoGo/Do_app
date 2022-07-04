@@ -1,3 +1,5 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:do_app/scenes/pages/utils.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,7 +8,6 @@ import 'package:flutter/material.dart';
 
 class SignUpWidget extends StatefulWidget {
   final VoidCallback onClickedSignIn;
-
 
   const SignUpWidget({Key key, @required this.onClickedSignIn}) : super(key: key);
 
@@ -29,7 +30,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
 
   @override
   Widget build(BuildContext context) => SingleChildScrollView(
-    padding: EdgeInsets.all(16),
+    padding: EdgeInsets.all(25),
     child: Form(
       key: formKey,
       child: Column(
@@ -38,39 +39,55 @@ class _SignUpWidgetState extends State<SignUpWidget> {
           SizedBox(
             height: 40,
           ),
+          Container(
+              alignment: Alignment.topLeft,
+              child: Text("Email", style: TextStyle(fontSize: 16),)
+          ),
+          SizedBox(
+            height: 10,
+          ),
           TextFormField(
             controller: emailController,
             cursorColor: Colors.white,
             textInputAction: TextInputAction.next,
-            decoration: InputDecoration(labelText: 'Email'),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
+              ),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (email) =>
               email != null && !EmailValidator.validate(email)
                   ? 'Enter a valid email' : null
           ),
-          SizedBox(height: 4,),
+          SizedBox(height: 30,),
+          Container(
+              alignment: Alignment.topLeft,
+              child: Text("Password", style: TextStyle(fontSize: 16),)
+          ),
+          SizedBox(height: 10,),
           TextFormField(
             controller: passwordController,
             textInputAction: TextInputAction.done,
             obscureText: true,
-            decoration: InputDecoration(labelText: 'Password'),
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.lock),
+            ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) =>
             value != null && value.length < 6
                 ? 'Enter min 6 characters'
                 :  null,
           ),
-          SizedBox(height: 20,),
-          ElevatedButton.icon(
+          SizedBox(height: 40,),
+          ElevatedButton(
             style: ElevatedButton.styleFrom(
+              primary: Colors.blue,
               minimumSize: Size.fromHeight(50),
             ),
-            icon: Icon(Icons.arrow_forward, size: 32),
-            label: Text(
-              'Sign Up',
-              style: TextStyle(fontSize: 24),
-            ),
+            child: Text("Sign Up", style: TextStyle(fontSize: 17),),
             onPressed: signUp,
+           // onPressed: signUp,
           ),
           SizedBox(height: 24,),
           RichText(
@@ -79,12 +96,17 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                   text: 'Already have an account?',
                   children: [
                     TextSpan(
+                        text:  " | ",
+                        style: TextStyle(
+                          wordSpacing: 10,
+                        )
+                    ),
+                    TextSpan(
                         recognizer: TapGestureRecognizer()
                           ..onTap = widget.onClickedSignIn,
                         text: 'Log In',
                         style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          color: Theme.of(context).colorScheme.secondary,
+                          color: Colors.blue,
                         )
                     )
                   ]
@@ -104,6 +126,12 @@ class _SignUpWidgetState extends State<SignUpWidget> {
           email: emailController.text.trim(),
           password: passwordController.text.trim()
       );
+      CollectionReference users = FirebaseFirestore.instance.collection('Users');
+      users
+        .doc(FirebaseAuth.instance.currentUser.uid)
+        .set({'Email': emailController.text})
+        .then((value) => print("User Document Added"))
+        .catchError((error) => print("Failed to add user: $error"));
     } on FirebaseAuthException catch (e) {
       print(e);
 
